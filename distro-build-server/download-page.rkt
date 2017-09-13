@@ -170,21 +170,7 @@
                             (xexpr->html h))))))
           null)))
 
-  (define page-site (and plt-style?
-                         (site "download-page"
-                               #:url "http://page.racket-lang.org/"
-                               #:navigation (if docs-url
-                                                (list nbsp
-                                                      nbsp
-                                                      (a href: docs-url "Documentation")
-                                                      (if pdf-docs-url
-                                                          (a href: pdf-docs-url "PDF")
-                                                          nbsp))
-                                                null)
-                               #:share-from (or www-site
-                                                (site "www"
-                                                      #:url "https://racket-lang.org/"
-                                                      #:generate? #f)))))
+  (define page-site (and plt-style? (make-download-site docs-url pdf-docs-url www-site)))
 
   (define orig-directory (current-directory))
 
@@ -403,3 +389,19 @@
         #:exists 'truncate/replace
         (lambda (o)
           (output-xml page-content o)))]))))
+
+(define (make-download-site docs-url pdf-docs-url www-site)
+  (site "download-page"
+        #:url "http://page.racket-lang.org/"
+        #:navigation (if docs-url
+                         (list nbsp
+                               nbsp
+                               (a href: docs-url "Documentation")
+                               (if pdf-docs-url
+                                   (a href: pdf-docs-url "PDF")
+                                   nbsp))
+                         null)
+        #:share-from (or www-site
+                         (site "www"
+                               #:url "https://racket-lang.org/"
+                               #:generate? #f))))
